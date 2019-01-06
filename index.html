@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <meta charset="utf-8">
+  <title>瀑布流新闻网站</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      box-sizing: border-box;
+      font-family: Arial;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    /* .clearfix:after{
+  content: '';
+  display: block;
+  clear: both;
+  } */
+
+    img {
+      width: 200px;
+    }
+
+    ul>li {
+      position: absolute;
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-left: 10px;
+      margin-top: 10px;
+      transition: all 0.5s;
+    }
+
+    .container {
+      margin: 0 auto;
+      width: 710px;
+    }
+
+    ul {
+      position: relative;
+      /* border: 1px solid black; */
+      /* display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-start; */
+    }
+
+    .name {
+      margin-top: 10px;
+      width: 200px;
+      font-size: 18px;
+      line-height: 1.5;
+      border-top: 1px solid #ccc;
+    }
+
+    #load {
+      opacity: 0;
+    }
+  </style>
+</head>
+
+<body>
+  
+  <div class="container">
+    <ul class="clearfix">
+
+      <!-- <li class="news">
+          <a class="news_img" href=""><img src="http://n.sinaimg.cn/tech/transform/200/w600h400/20181229/Wnmp-hqwsysy8813818.jpg" alt=""></a>
+          <h4 class="name">news1</h4>
+        </li> -->
+    </ul>
+  </div>
+  <div id="load"></div>
+</body>
+
+
+<script>
+  // function start(){
+  //   init: function(){
+  //     var perPageCount = 10
+  //     var curPage = 1
+
+  //     this.bind()
+  //   },
+
+  //   bind: function(){
+
+
+  //   },
+
+  //   getData: function(callback){
+
+
+  //     $ajax({
+  //       url: 'http://platform.sina.com.cn/slide/album_tech',
+  //       data: {
+  //         app_key: '1271687855',
+  //         num: perPageCount,
+  //         page: curPage
+  //       }
+  //       dataType: 'jsonp',
+  //       jsonp: 'jsoncallback'
+  //     }).done(function(ret){
+  //       if(ret && ret.status && ret.status.code === "0"){
+  //         render(ret.data)
+  //         curPage++
+  //       }
+  //       console.log(ret)
+  //     }).fail(function(){
+  //       console.log("error...")
+  //     })
+
+  //   },
+
+  //   render: function(data){
+
+  //     data.forEach(function(){
+  //       var tpl = `<li class="news">
+  //           <a class="img" href=""><img src="http://n.sinaimg.cn/tech/transform/200/w600h400/20181229/Wnmp-hqwsysy8813818.jpg" alt=""></a>
+  //           <div class="name">news</div>
+  //         </li>`
+  //       var $node = $(tpl)
+  //       $node.find('.news img').attr('src', img_url)
+  //       $node.find('.news .name').text(name)      
+  //     })
+
+  //   }
+  // }
+
+
+  //改进：1.做成 start() 形式，整合
+  //     2.增加 loading 动画效果
+  //     3.setTimeout
+  //     4.懒加载实现
+  //     *ul高度0？ √
+  //     *滚动条在中间一直增长？
+
+
+
+  //获取数据
+  var perPageCount = 9
+  var curPage = 1
+  var isDataArrive = true
+
+  function getData() {
+    isDataArrive = true
+    $.ajax({
+      url: 'http://platform.sina.com.cn/slide/album_tech',
+      data: {
+        app_key: '1271687855',
+        num: perPageCount,
+        page: curPage
+      },
+      dataType: 'jsonp',
+      jsonp: 'jsoncallback'
+    }).done(function (ret) {
+      if (ret && ret.status && ret.status.code === "0") {
+        render(ret.data)           // <--- render()
+        curPage++
+        console.log(ret)
+      }
+
+    }).fail(function () {
+      console.log("error...")
+    })
+  }
+
+  //把数据加载入页面
+  function render(item) {
+    item.forEach(function (data) {
+      var tpl = `<li class="news">
+          <a class="news_img" href=""><img src="http://n.sinaimg.cn/tech/transform/200/w600h400/20181229/Wnmp-hqwsysy8813818.jpg" alt=""></a>
+          <h4 class="name">news1</h4>
+        </li>`
+      var $node = $(tpl)
+      //$node = $('<li>...</li>')
+      //       console.log(data.img_url)
+      //       console.log(data.short_name)
+
+      $node.find('.news_img img').attr('src', data.img_url)
+      $node.find('.name').text(data.short_name)
+      $node.find('.news_img').attr('href', data.url)
+      $('ul').append($node)
+    })
+    waterfall_place()
+  }
+
+  // //懒加载
+  // function lazyStart(){
+  //   if($(node).offset().top <= $(window).scrollTop() + $(window).Height){
+  //     isShow()
+  //   }
+  // }
+
+
+
+  //瀑布流
+
+
+  function waterfall_place() {
+    var imgWidth = $('.news').outerWidth(true)
+    var imgHeightArray = []
+    var imgCount = Math.floor($('.container').outerWidth() / imgWidth)
+    console.log(imgCount)
+
+    for (i = 0; i < imgCount; i++) {
+      imgHeightArray[i] = 0
+    }
+
+
+
+    $('li').each(function () {
+      var minHeight = imgHeightArray[0]
+      var minIndex = 0
+      //     console.log(imgHeightArray[0])
+
+      for (i = 0; i < imgCount; i++) {
+        if (imgHeightArray[i] < minHeight) {
+          minHeight = imgHeightArray[i]
+          minIndex = i
+          //         console.log("ok")
+        }
+      }
+
+      $(this).css({
+        left: minIndex * imgWidth,
+        top: minHeight
+      })
+
+      imgHeightArray[minIndex] += $(this).outerHeight(true)
+
+      $('ul').height(Math.max(...imgHeightArray))    // Math.max.apply(null, Array)
+      $('#load').height(Math.max(...imgHeightArray))
+      //     console.log(minIndex)
+      //     console.log(imgWidth)
+      //     console.log(imgHeightArray)
+    })
+    isDataArrive = false
+  }
+
+  function isToBottom() {
+    return $('#load').offset().top + 10 <= $(window).height() + $(window).scrollTop()
+  }
+
+  function start() {
+    getData()
+  }
+
+  $(window).load(function () {                      //让数据一个一个载入
+    if (!isDataArrive && isToBottom()) {
+      start()
+    }
+  })
+
+  $(window).scroll(function () {                     //让数据一个一个载入
+    if (!isDataArrive && isToBottom()) {
+      start()
+    }
+  })
+
+  start()
+// $(window).on('scroll', function(){
+//   if(isToBottom()){
+//     getData()
+//   }
+// })
+
+</script>
+
+</html>
