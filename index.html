@@ -71,7 +71,7 @@
     <ul class="clearfix">
 
       <!-- <li class="news">
-          <a class="news_img" href=""><img src="http://n.sinaimg.cn/tech/transform/200/w600h400/20181229/Wnmp-hqwsysy8813818.jpg" alt=""></a>
+          <a class="news_img" href=""><img src="//n.sinaimg.cn/tech/transform/200/w600h400/20181229/Wnmp-hqwsysy8813818.jpg" alt=""></a>
           <h4 class="name">news1</h4>
         </li> -->
     </ul>
@@ -98,7 +98,7 @@
 
 
   //     $ajax({
-  //       url: 'http://platform.sina.com.cn/slide/album_tech',
+  //       url: '//platform.sina.com.cn/slide/album_tech',
   //       data: {
   //         app_key: '1271687855',
   //         num: perPageCount,
@@ -122,7 +122,7 @@
 
   //     data.forEach(function(){
   //       var tpl = `<li class="news">
-  //           <a class="img" href=""><img src="http://n.sinaimg.cn/tech/transform/200/w600h400/20181229/Wnmp-hqwsysy8813818.jpg" alt=""></a>
+  //           <a class="img" href=""><img src="//n.sinaimg.cn/tech/transform/200/w600h400/20181229/Wnmp-hqwsysy8813818.jpg" alt=""></a>
   //           <div class="name">news</div>
   //         </li>`
   //       var $node = $(tpl)
@@ -151,7 +151,7 @@
   function getData() {
     isDataArrive = true
     $.ajax({
-      url: 'http://platform.sina.com.cn/slide/album_tech',
+      url: '//platform.sina.com.cn/slide/album_tech',
       data: {
         app_key: '1271687855',
         num: perPageCount,
@@ -175,7 +175,7 @@
   function render(item) {
     item.forEach(function (data) {
       var tpl = `<li class="news">
-          <a class="news_img" href=""><img src="http://n.sinaimg.cn/tech/transform/200/w600h400/20181229/Wnmp-hqwsysy8813818.jpg" alt=""></a>
+          <a class="news_img" href=""><img src="//n.sinaimg.cn/tech/transform/200/w600h400/20181229/Wnmp-hqwsysy8813818.jpg" alt=""></a>
           <h4 class="name">news1</h4>
         </li>`
       var $node = $(tpl)
